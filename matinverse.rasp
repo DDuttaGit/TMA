@@ -1,0 +1,50 @@
+A = [7, 8, 12, 10, 11, 9, 2, 4, 21];
+
+examples off
+set example A
+
+def Cofactor(){
+    n = length^0.5;
+    i,j = (indices-indices%n)/n, indices%n;
+    idx1, idx2, idx3, idx4 = (i+1)%n, (j+1)%n, (i+2)%n, (j+2)%n;
+
+    one, two, three, four = idx3*n+idx4, idx1*n+idx2, idx3*n+idx2, idx1*n+idx4;
+
+    sel_one, sel_two = select(indices, one, ==), select(indices, two, ==);
+    sel_three, sel_four = select(indices, three, ==), select(indices, four, ==);   
+    
+    cofactor = aggregate(sel_one, tokens_int)*aggregate(sel_two, tokens_int)-aggregate(sel_three, tokens_int)*aggregate(sel_four, tokens_int);
+    return cofactor;
+    
+}
+
+# Only for 3x3 matrices
+def Det(Cofactor){
+    n = length^0.5;
+    mask = select(indices, n, <) and select(indices, indices, ==);
+    det = length*aggregate(full_s, aggregate(mask, (tokens_int*Cofactor)));
+    return det;
+}
+
+
+def Invert3x3(){
+    n = length^0.5;
+    i,j = (indices-indices%n)/n, indices%n;
+    idx1, idx2, idx3, idx4 = (i+1)%n, (j+1)%n, (i+2)%n, (j+2)%n;
+
+    one, two, three, four = idx3*n+idx4, idx1*n+idx2, idx3*n+idx2, idx1*n+idx4;
+
+    sel_one, sel_two = select(indices, one, ==), select(indices, two, ==);
+    sel_three, sel_four = select(indices, three, ==), select(indices, four, ==);
+
+    mask = select(indices, n, <) and select(indices, indices, ==);
+
+    P, Q, R, S = aggregate(sel_one, tokens_int), aggregate(sel_two, tokens_int), aggregate(sel_three, tokens_int), aggregate(sel_four, tokens_int);
+    major = P*Q-R*S;
+    det = length*aggregate(full_s, aggregate(mask, (tokens_int*major)));
+
+    reflectedIndices = (indices%n)*n + ((indices-indices%n))/n;
+    reflect = select(indices, reflectedIndices, ==);
+
+    return aggregate(reflect, major/det);
+}

@@ -1,0 +1,31 @@
+A = [0.1087, -0.2016, 1.8557, 0.3447, -0.2906, -0.5858];
+set example A
+examples off
+
+def ReLU(){
+  return (0 if tokens_float<0 else tokens_float);
+}
+
+# softmaxsquare
+
+def softmax(){
+        n = length^0.5;
+        exp = (2.73^tokens_float);
+        sel1, sel2, sel3 =(select(indices, n, <) and select(n, indices, >)), (select(indices, n, >=) and select(indices, 2*n, <) and select(2*n, indices, >) and select(n, indices, <=)), (select(indices, 2*n, >=) and select(indices, n*n, <) and select(n*n, indices, >) and select(2*n, indices, <=));
+        denom1, denom2, denom3 = n*aggregate(sel1, exp), n*aggregate(sel2, exp), n*aggregate(sel3, exp);
+        denom = (denom1+denom2+denom3);
+        return exp/denom;
+}
+
+
+# softmaxrect_rc
+
+def softmaxrect_3dot(){
+    r, c = 3, length/3;
+    exp = (2.73^tokens_float);
+    sel1, sel2, sel3 =(select(indices, c*0+c, <) and select(c*0+c, indices, >)), (select(indices, c*0+c, >=) and select(indices, c*1+c, <) and select(c*1+c, indices, >) and select(c*0+c, indices, <=)), (select(indices, c*1+c, >=) and select(indices, c*2+c, <) and select(c*2+c, indices, >) and select(c*1+c, indices, <=));
+    denom1, denom2, denom3 = c*aggregate(sel1, exp), c*aggregate(sel2, exp), c*aggregate(sel3, exp);
+    denom = (denom1+denom2+denom3);
+    return exp/denom;
+}
+

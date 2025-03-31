@@ -1,0 +1,25 @@
+
+A = [1,2,3,4,5,6,7,8,9];
+set example A
+examples off
+
+# TranposeSquare
+def Transpose(){
+    n = length^0.5;
+    reflectedIndices = (indices%n)*n + ((indices-indices%n))/n;
+    reflect = select(indices, reflectedIndices, ==);
+    return aggregate(reflect, tokens_int);
+}
+
+
+B = [1,2,3,4,5,6];
+set example B
+examples off
+
+# TransposeRect
+def Transpose_3dot(){
+    r, c = 3, length/3;
+    reflectedIndices = (indices%r)*c + ((indices-indices%r))/r;
+    reflect = select(indices, reflectedIndices, ==);
+    return aggregate(reflect, tokens_int);
+}
