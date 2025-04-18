@@ -1,8 +1,27 @@
-A_B = [7,9,12,4,5,21,34,72,23,10,3,6,1,64,30,73, 2,0,0,0,0,2,0,0,0,0,2,0,0,0,0,2];
+A_B = [1,2,3,4,5,6, 1,2,3,4,5,6,7,8];
 
 set example A_B
 examples off
 
+def Matmul_3dot4(){
+      k = length/(3+4);
+
+      one_a, one_b, two_a, two_b, three_a, three_b, four_b = indices%k, (indices%k)*4+3*k, (indices%k)+1*k, (indices%k)*4+3*k+1, (indices%k)+2*k, (indices%k)*4+3*k+2, (indices%k)*4+3*k+3;
+
+      one_sa, one_sb, two_sa, two_sb, three_sa, three_sb, four_sb = select(indices, one_a, ==), select(indices, one_b, ==), select(indices, two_a, ==), select(indices, two_b, ==), select(indices, three_a, ==), select(indices, three_b, ==), select(indices, four_b, ==);
+
+      oneone_ab, onetwo_ab, onethree_ab, onefour_ab, twoone_ab, twotwo_ab, twothree_ab, twofour_ab, threeone_ab, threetwo_ab, threethree_ab, threefour_ab = aggregate(one_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(four_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(four_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(four_sb, tokens_int);
+
+      sel_one, sel_two, sel_three, sel_four, sel_five, sel_six, sel_seven, sel_eight, sel_nine, sel_ten, sel_eleven, sel_twelve = select(indices, k, <) and select(0, indices, ==), select(indices, k, <) and select(1, indices, ==), select(indices, k, <) and select(2, indices, ==), select(indices, k, <) and select(3, indices, ==), select(indices, k, <) and select(4, indices, ==), select(indices, k, <) and select(5, indices, ==), select(indices, k, <) and select(6, indices, ==), select(indices, k, <) and select(7, indices, ==), select(indices, k, <) and select(8, indices, ==), select(indices, k, <) and select(9, indices, ==), select(indices, k, <) and select(10, indices, ==), select(indices, k, <) and select(11, indices, ==);
+
+      matmul = k*(aggregate(sel_one, oneone_ab)+aggregate(sel_two, onetwo_ab)+aggregate(sel_three, onethree_ab)+aggregate(sel_four, onefour_ab)+aggregate(sel_five, twoone_ab)+aggregate(sel_six, twotwo_ab)+aggregate(sel_seven, twothree_ab)+aggregate(sel_eight, twofour_ab)+aggregate(sel_nine, threeone_ab)+aggregate(sel_ten, threetwo_ab)+aggregate(sel_eleven, threethree_ab)+aggregate(sel_twelve, threefour_ab));
+      return matmul;
+}
+
+B_C = [7,9,12,4,5,21,34,72,23,10,3,6,1,64,30,73, 2,0,0,0,0,2,0,0,0,0,2,0,0,0,0,2];
+
+set example B_C
+examples off
 
 def Matmul4x4(){
     n = (length/2)^0.5;
@@ -18,22 +37,4 @@ def Matmul4x4(){
     matmul = n*(aggregate(sel_one, oneone_ab)+aggregate(sel_two, onetwo_ab)+aggregate(sel_three, onethree_ab)+aggregate(sel_four, onefour_ab)+aggregate(sel_five, twoone_ab)+aggregate(sel_six, twotwo_ab)+aggregate(sel_seven, twothree_ab)+aggregate(sel_eight, twofour_ab)+aggregate(sel_nine, threeone_ab)+aggregate(sel_ten, threetwo_ab)+aggregate(sel_eleven, threethree_ab)+aggregate(sel_twelve, threefour_ab)+aggregate(sel_thirteen, fourone_ab)+aggregate(sel_fourteen, fourtwo_ab)+aggregate(sel_fifteen, fourthree_ab)+aggregate(sel_sixteen, fourfour_ab));
 
     return matmul;   
-}
-
-B_C = [1,2,3,4,5,6, 1,2,3,4,5,6,7,8];
-
-set example B_C
-examples off
-
-def Matmul_324(){
-      one_a, one_b, two_a, two_b, three_a, three_b, four_b = indices%2, (indices%2)*4+3*2, (indices%2)+1*2, (indices%2)*4+3*2+1, (indices%2)+2*2, (indices%2)*4+3*2+2, (indices%2)*4+3*2+3;
-    
-      one_sa, one_sb, two_sa, two_sb, three_sa, three_sb, four_sb = select(indices, one_a, ==), select(indices, one_b, ==), select(indices, two_a, ==), select(indices, two_b, ==), select(indices, three_a, ==), select(indices, three_b, ==), select(indices, four_b, ==);
-    
-      oneone_ab, onetwo_ab, onethree_ab, onefour_ab, twoone_ab, twotwo_ab, twothree_ab, twofour_ab, threeone_ab, threetwo_ab, threethree_ab, threefour_ab = aggregate(one_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(one_sa, tokens_int)*aggregate(four_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(two_sa, tokens_int)*aggregate(four_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(one_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(two_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(three_sb, tokens_int), aggregate(three_sa, tokens_int)*aggregate(four_sb, tokens_int);
-    
-      sel_one, sel_two, sel_three, sel_four, sel_five, sel_six, sel_seven, sel_eight, sel_nine, sel_ten, sel_eleven, sel_twelve = select(indices, 2, <) and select(0, indices, ==), select(indices, 2, <) and select(1, indices, ==), select(indices, 2, <) and select(2, indices, ==), select(indices, 2, <) and select(3, indices, ==), select(indices, 2, <) and select(4, indices, ==), select(indices, 2, <) and select(5, indices, ==), select(indices, 2, <) and select(6, indices, ==), select(indices, 2, <) and select(7, indices, ==), select(indices, 2, <) and select(8, indices, ==), select(indices, 2, <) and select(9, indices, ==), select(indices, 2, <) and select(10, indices, ==), select(indices, 2, <) and select(11, indices, ==);
-    
-      matmul = 2*(aggregate(sel_one, oneone_ab)+aggregate(sel_two, onetwo_ab)+aggregate(sel_three, onethree_ab)+aggregate(sel_four, onefour_ab)+aggregate(sel_five, twoone_ab)+aggregate(sel_six, twotwo_ab)+aggregate(sel_seven, twothree_ab)+aggregate(sel_eight, twofour_ab)+aggregate(sel_nine, threeone_ab)+aggregate(sel_ten, threetwo_ab)+aggregate(sel_eleven, threethree_ab)+aggregate(sel_twelve, threefour_ab));
-      return matmul;
 }
