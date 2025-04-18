@@ -1,6 +1,6 @@
 # Towards Mimicking Attention
 
-### _Anonymous TACL submission_
+### _Anonymous submission_
 <p align="center">
 <img src="https://github.com/user-attachments/assets/1ed3d235-7528-4f08-98e2-7a248f89bf77" />
 </p>
