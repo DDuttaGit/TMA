@@ -1,0 +1,28 @@
+A = [14, 18, 3, 12, 6, 20, 7, 17, 13, 9];
+B= [80, 48, 59, 16, 13, 69, 84, 21,34, 41];
+set example A
+examples off
+
+def MaxMinSort(){
+    MaxSel0 = select(indices, indices, ==) and select(0, indices%2, ==);
+
+    MaxSel = select(indices, indices, ==); 
+    MinSel = select(indices, indices+1, ==) and select(1, indices%2+1, ==);   # (select(indices, indices, ==) and select(1, indices%2, ==)) or (select(indices, indices+1, ==) and select(1, indices%2+1, ==));
+    MaxminusMin = aggregate(MaxSel, tokens_int) - aggregate(MinSel, tokens_int);
+
+    reqFlip = 1 if MaxminusMin<0 else 0; # aggregate(select(MaxminusMin, 0, <), 1);
+    reqFlip = reqFlip + aggregate(select(indices+1, indices, ==), reqFlip);
+
+    # if there is a 1, 0 sequence it means we need to flip
+    # reqFlip([14, 18, 3, 12, 6, 20, 7, 17, 13, 9]) = [1, 0, 1, 0, 1, 0, 1, 0, 0, 0] (ints)
+
+    # Take reqFlip and \neg reqFlip
+
+    revby2 = aggregate(select(0, indices%2, ==), 1) + aggregate(select(1, indices%2, ==), -1); # 1 if indices%2==0 else -1;
+    flip = select(indices, indices+revby2, ==);
+
+
+    sort = reqFlip*aggregate(flip, tokens_int) + (1-reqFlip)*aggregate(select(indices, indices, ==), tokens_int);
+    # sort = reqFlip*aggregate(flip, tokens_int) + (1-reqFlip)*aggregate(flip, tokens_int);
+    return sort;
+}
