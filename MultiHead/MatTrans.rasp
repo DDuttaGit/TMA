@@ -1,0 +1,18 @@
+C = [1,2,3,4,5,6, 6,5,4,3,2,1];
+set example C
+examples off
+
+def Transpose_3dot_2h(){
+    h = 2;
+    r, c = 3, length/(3*h);
+    segind = indices % (r*c);
+    reflectedIndices1 = (segind%r)*c + ((segind-segind%r))/r + r*c*0;
+    reflectedIndices2 = (segind%r)*c + ((segind-segind%r))/r + r*c*1;
+ 
+    sel1 = (select(indices, indices, ==) and select(indices, r*c, <));
+    sel2 = (select(indices, indices, ==) and select(indices, r*c, >=));
+
+    reflectedIndices = aggregate(sel1, reflectedIndices1) + aggregate(sel2, reflectedIndices2);
+    reflect = select(indices, reflectedIndices, ==);
+    return aggregate(reflect, tokens_int);
+}
