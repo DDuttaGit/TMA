@@ -1,0 +1,28 @@
+A1A2_B1B2 = [1.0,2.0,3.0,4.0,5.0,6.0, 1.5,2.5,3.5,4.5,5.5,6.5, 7.0,8.0,9.0,10.0, 7.5,8.5,9.5,10.5];
+set example A1A2_B1B2
+examples off
+
+def matmul3dot2_2h(){
+    r, c, h = 3,2,2;
+    k = length/(h*(r+c));
+    A1_ind, A2_ind, B1_ind, B2_ind = indices%(r*k), indices%(r*k)+(h-1)*(r*k), (h*r*k)+indices%(k*c), (h*r*k)+indices%(k*c)+(h-1)*k*c;
+
+    A1_one, B1_one, A1_two, B1_two, A1_three = A1_ind%k, (h*r*k)+(B1_ind%k)*c, (A1_ind%k)+1*k, (h*r*k)+(B1_ind%k)*c+1, (A1_ind%k)+2*k;
+    sel_A1_one, sel_B1_one, sel_A1_two, sel_B1_two, sel_A1_three = select(indices, A1_one, ==),select(indices, B1_one, ==), select(indices, A1_two, ==), select(indices, B1_two, ==), select(indices, A1_three, ==);
+    oneone_A1B1, onetwo_A1B1, twoone_A1B1, twotwo_A1B1, threeone_A1B1, threetwo_A1B1 = aggregate(sel_A1_one, tokens_float)*aggregate(sel_B1_one, tokens_float), aggregate(sel_A1_one, tokens_float)*aggregate(sel_B1_two, tokens_float), aggregate(sel_A1_two, tokens_float)*aggregate(sel_B1_one, tokens_float), aggregate(sel_A1_two, tokens_float)*aggregate(sel_B1_two, tokens_float), aggregate(sel_A1_three, tokens_float)*aggregate(sel_B1_one, tokens_float), aggregate(sel_A1_three, tokens_float)*aggregate(sel_B1_two, tokens_float);
+    sel_A1B1one, sel_A1B1two, sel_A1B1three, sel_A1B1four, sel_A1B1five, sel_A1B1six = select(indices, k, <) and select(0, indices, ==), select(indices, k, <) and select(1, indices, ==), select(indices, k, <) and select(2, indices, ==), select(indices, k, <) and select(3, indices, ==), select(indices, k, <) and select(4, indices, ==), select(indices, k, <) and select(5, indices, ==);
+
+    A2_one, B2_one, A2_two, B2_two, A2_three = A2_ind%k + (h-1)*(r*k), (h*r*k) + (B2_ind%k)*c + (h-1)*k*c, (A2_ind%k)+1*k +(h-1)*(r*k), (h*r*k) + (B2_ind%k)*c + (h-1)*k*c + 1 , (A2_ind%k)+2*k + (h-1)*(r*k);
+    sel_A2_one, sel_B2_one, sel_A2_two, sel_B2_two, sel_A2_three = select(indices, A2_one, ==),select(indices, B2_one, ==), select(indices, A2_two, ==), select(indices, B2_two, ==), select(indices, A2_three, ==);
+    oneone_A2B2, onetwo_A2B2, twoone_A2B2, twotwo_A2B2, threeone_A2B2, threetwo_A2B2 = aggregate(sel_A2_one, tokens_float)*aggregate(sel_B2_one, tokens_float), aggregate(sel_A2_one, tokens_float)*aggregate(sel_B2_two, tokens_float), aggregate(sel_A2_two, tokens_float)*aggregate(sel_B2_one, tokens_float), aggregate(sel_A2_two, tokens_float)*aggregate(sel_B2_two, tokens_float), aggregate(sel_A2_three, tokens_float)*aggregate(sel_B2_one, tokens_float), aggregate(sel_A2_three, tokens_float)*aggregate(sel_B2_two, tokens_float);
+    sel_A2B2one, sel_A2B2two, sel_A2B2three, sel_A2B2four, sel_A2B2five, sel_A2B2six = select(indices, k, <) and select(0+r*c, indices, ==), select(indices, k, <) and select(1+r*c, indices, ==), select(indices, k, <) and select(2+r*c, indices, ==), select(indices, k, <) and select(3+r*c, indices, ==), select(indices, k, <) and select(4+r*c, indices, ==), select(indices, k, <) and select(5+r*c, indices, ==);
+
+
+    matmul1 = k*(aggregate(sel_A1B1one, oneone_A1B1)+aggregate(sel_A1B1two, onetwo_A1B1)+aggregate(sel_A1B1three, twoone_A1B1)+aggregate(sel_A1B1four, twotwo_A1B1)+aggregate(sel_A1B1five, threeone_A1B1)+aggregate(sel_A1B1six, threetwo_A1B1));
+    
+    matmul2 = k*(aggregate(sel_A2B2one, oneone_A2B2)+aggregate(sel_A2B2two, onetwo_A2B2)+aggregate(sel_A2B2three, twoone_A2B2)+aggregate(sel_A2B2four, twotwo_A2B2)+aggregate(sel_A2B2five, threeone_A2B2)+aggregate(sel_A2B2six, threetwo_A2B2));
+    
+    matmul = matmul1+matmul2;
+
+    return matmul;
+}
