@@ -1,0 +1,22 @@
+A = [-12, 2, 3, 5, 20, -60,  74, -63, 12, -25, 56, 8];
+set example A
+examples off
+
+def softmaxrect_3dot_2h(){
+    h = 2;
+    r, c = 3, length/(3*h);
+    exp = (2.73^tokens_float);
+    
+    sel1, sel2 = (select(indices, indices, ==) and select(indices, r*c, <)), (select(indices, indices, ==) and select(indices, r*c, >=));
+    exp1, exp2 = aggregate(sel1, exp), aggregate(sel2, exp);
+    
+    sel11, sel12, sel13 =(select(indices, c*0+c, <) and select(c*0+c, indices, >)), (select(indices, c*0+c, >=) and select(indices, c*1+c, <) and select(c*1+c, indices, >) and select(c*0+c, indices, <=)), (select(indices, c*1+c, >=) and select(indices, c*2+c, <) and select(c*2+c, indices, >) and select(c*1+c, indices, <=));
+    denom11, denom12, denom13 = c*aggregate(sel11, exp1), c*aggregate(sel12, exp1), c*aggregate(sel13, exp1);
+    denom1 = (denom11+denom12+denom13);
+    
+    sel21, sel22, sel23 =(select(indices, c*2+c, >=) and select(indices, r*c+c*0+c, <) and select(r*c+c*0+c, indices, >) and select(c*2+c, indices, <=)), (select(indices, r*c+c*0+c, >=) and select(indices, r*c+c*1+c, <) and select(r*c+c*1+c, indices, >) and select(r*c+c*0+c, indices, <=)), (select(indices, r*c+c*1+c, >=) and select(indices, r*c+c*2+c, <) and select(r*c+c*2+c, indices, >) and select(r*c+c*1+c, indices, <=));
+    denom21, denom22, denom23 = c*aggregate(sel21, exp2), c*aggregate(sel22, exp2), c*aggregate(sel23, exp2);
+    denom2 = (denom21+denom22+denom23);
+    
+    return exp/(denom1+denom2);
+}
