@@ -9,6 +9,16 @@ Construction of the transformer network $\mathcal{U}$ (see the diagram above) ha
 
 Implementation of fundamental matrix operations and activations has been attached in this repository.
 
+To interpret the diagram in the file `Inverse.pdf`, we request the readers to go top-down (layer 0 - 5). Inverting a matrix of order $3$, such as the following has been presented in the figure.
+
+$$
+\left(\begin{array}{ccc} 
+7 & 8 & 12\\
+10 & 11 & 9\\
+2 & 4 & 21
+\end{array}\right)
+$$ 
+
 
 #### References
 [^1]: Weiss, Gail, Yoav Goldberg, and Eran Yahav. "Thinking Like Transformers." In International Conference on Machine Learning, pp. 11080-11090. PMLR, 2021.
