@@ -1,4 +1,4 @@
-# Towards Mimicking Attention
+# On the Existence of Universal Simulators of Attention
 
 ### _Anonymous Submission_
 <p align="center">
