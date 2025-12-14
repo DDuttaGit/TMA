@@ -1,0 +1,25 @@
+RASP 0.1
+running example is: hello
+>> 		!!ignoring input:
+	 Error: Undefined variable: dgsdfsdf
+>> something went wrong: unsupported operand type(s) for /: 'int' and 'str'
+>> not implemented this command yet! ignoring
+>> 	!! antlr exception: mismatched input '==' expecting {'(', '{', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, ID} 	-- ignoring input
+>> something went wrong: asked to average multiple values, but they are non-numbers: ['h', 'e', 'l', 'l', 'o']
+>> something went wrong: unsupported operand type(s) for +: 'int' and 'str'
+>> 	!! antlr exception: missing ID at 'in' 	-- ignoring input
+>> 	!! antlr exception: extraneous input 'in' expecting {'set', 's-op', 'selector', 'show', 'full seq display', 'examples', 'exit()', 'exit', 'quit', 'quit()', 'load', 'draw', '(', 'def', '{', 'for', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, Comment, ID} 	-- ignoring input
+>> something went wrong: can only concatenate list (not "int") to list
+>> 	!! antlr exception: extraneous input 'if' expecting {'set', 's-op', 'selector', 'show', 'full seq display', 'examples', 'exit()', 'exit', 'quit', 'quit()', 'load', 'draw', '(', 'def', '{', 'for', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, Comment, ID} 	-- ignoring input
+>> 	!! antlr exception: extraneous input ';' expecting {<EOF>, 'set', 's-op', 'selector', 'show', 'full seq display', 'examples', 'exit()', 'exit', 'quit', 'quit()', 'load', 'draw', '(', 'def', '{', 'for', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, Comment, ID} 	-- ignoring input
+>> 	!! antlr exception: mismatched input ';' expecting {'set', 's-op', 'selector', 'show', 'full seq display', 'examples', 'exit()', 'exit', 'quit', 'quit()', 'load', 'draw', '(', 'def', '{', 'for', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, Comment, ID} 	-- ignoring input
+>>      dict: out = {}
+>> 	!! antlr exception: mismatched input 'if' expecting {'set', 's-op', 'selector', 'show', 'full seq display', 'examples', 'exit()', 'exit', 'quit', 'quit()', 'load', 'draw', '(', 'def', '{', 'for', 'aggregate(', '[', 'not', '-', '+', 'round', 'indicator', 'select(', 'range(', 'zip(', 'len(', Float, PosInt, String, Comment, ID} 	-- ignoring input
+>> .. 		!!ignoring input:
+	 attempted to create sequence with vals of different types:
+		 ['a', 3]
+>> 		!!ignoring input:
+	 attempted to create sequence with illegal val types (vals must be bool, float, int or string):
+		 [[1, 2]]
+>> 
+
