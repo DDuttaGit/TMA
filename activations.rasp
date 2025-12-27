@@ -10,7 +10,7 @@ def ReLU(){
 
 def softmax(){
         n = length^0.5;
-        exp = (2.73^tokens_float);
+        exp = (2.718^tokens_float);
         sel1, sel2, sel3 =(select(indices, n, <) and select(n, indices, >)), (select(indices, n, >=) and select(indices, 2*n, <) and select(2*n, indices, >) and select(n, indices, <=)), (select(indices, 2*n, >=) and select(indices, n*n, <) and select(n*n, indices, >) and select(2*n, indices, <=));
         denom1, denom2, denom3 = n*aggregate(sel1, exp), n*aggregate(sel2, exp), n*aggregate(sel3, exp);
         denom = (denom1+denom2+denom3);
