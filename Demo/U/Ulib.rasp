@@ -1,0 +1,67 @@
+# Attention Module
+# sm(XAX^T)XV
+
+set example [1, 2, 3]
+examples off
+
+# TransposeRect (3 x dot) X^T
+def Transpose_3dot(){
+    r, c = 3, length/3;
+    reflectedIndices = (indices%r)*c + ((indices-indices%r))/r;
+    reflect = select(indices, reflectedIndices, ==);
+    return aggregate(reflect, tokens_float);
+}
+
+# Matrix Multiplication (3 x dot x 3) --> Y1 = X . A
+# Matrix Multiplication (3 x dot x 3) --> Y2 = Y1 . X^T
+# Matrix Multiplication (3 x dot x 3) --> Y4 = X . V
+def matmul_3dot3(){
+      k = length/(3+3);
+
+      one_a, one_b, two_a, two_b, three_a, three_b = indices%k, (indices%k)*k + k*3, (indices%k) + k, (indices%k)*k + k*3 + 1, (indices%k) + 2*k, (indices%k)*k + k*3 + 2;
+
+      one_sa, one_sb, two_sa, two_sb, three_sa, three_sb = select(indices, one_a, ==), select(indices, one_b, ==), select(indices, two_a, ==), select(indices, two_b, ==), select(indices, three_a, ==), select(indices, three_b, ==);
+
+      oneone_ab, onetwo_ab, onethree_ab, twoone_ab, twotwo_ab, twothree_ab, threeone_ab, threetwo_ab, threethree_ab = aggregate(one_sa, tokens_float)*aggregate(one_sb, tokens_float), aggregate(one_sa, tokens_float)*aggregate(two_sb, tokens_float), aggregate(one_sa, tokens_float)*aggregate(three_sb, tokens_float), aggregate(two_sa, tokens_float)*aggregate(one_sb, tokens_float), aggregate(two_sa, tokens_float)*aggregate(two_sb, tokens_float), aggregate(two_sa, tokens_float)*aggregate(three_sb, tokens_float), aggregate(three_sa, tokens_float)*aggregate(one_sb, tokens_float), aggregate(three_sa, tokens_float)*aggregate(two_sb, tokens_float), aggregate(three_sa, tokens_float)*aggregate(three_sb, tokens_float);
+
+      sel_one, sel_two, sel_three, sel_four, sel_five, sel_six, sel_seven, sel_eight, sel_nine = select(indices, k, <) and select(0, indices, ==), select(indices, k, <) and select(1, indices, ==), select(indices, k, <) and select(2, indices, ==), select(indices, k, <) and select(3, indices, ==), select(indices, k, <) and select(4, indices, ==), select(indices, k, <) and select(5, indices, ==), select(indices, k, <) and select(6, indices, ==), select(indices, k, <) and select(7, indices, ==), select(indices, k, <) and select(8, indices, ==);
+
+      matmul = k*(aggregate(sel_one, oneone_ab)+aggregate(sel_two, onetwo_ab)+aggregate(sel_three, onethree_ab)+aggregate(sel_four, twoone_ab)+aggregate(sel_five, twotwo_ab)+aggregate(sel_six, twothree_ab)+aggregate(sel_seven, threeone_ab)+aggregate(sel_eight, threetwo_ab)+aggregate(sel_nine, threethree_ab));
+
+      return matmul;
+}
+
+# Softmax (3 x dot) --> Y3 = sm(Y2) [3 x 3]
+def softmax_3dot(){
+    r, c = 3, length/3;
+    exp = (2.718^tokens_float);
+    sel1, sel2, sel3 =(select(indices, c*0+c, <) and select(c*0+c, indices, >)), (select(indices, c*0+c, >=) and select(indices, c*1+c, <) and select(c*1+c, indices, >) and select(c*0+c, indices, <=)), (select(indices, c*1+c, >=) and select(indices, c*2+c, <) and select(c*2+c, indices, >) and select(c*1+c, indices, <=));
+    denom1, denom2, denom3 = c*aggregate(sel1, exp), c*aggregate(sel2, exp), c*aggregate(sel3, exp);
+    denom = (denom1+denom2+denom3);
+    return exp/denom;
+}
+
+
+def MaxMinSort(){
+    MaxSel0 = select(indices, indices, ==) and select(0, indices%2, ==);
+
+    MaxSel = select(indices, indices, ==); 
+    MinSel = select(indices, indices+1, ==) and select(1, indices%2+1, ==);   # (select(indices, indices, ==) and select(1, indices%2, ==)) or (select(indices, indices+1, ==) and select(1, indices%2+1, ==));
+    MaxminusMin = aggregate(MaxSel, tokens_float) - aggregate(MinSel, tokens_float);
+
+    reqFlip = 1 if MaxminusMin<0 else 0; # aggregate(select(MaxminusMin, 0, <), 1);
+    reqFlip = reqFlip + aggregate(select(indices+1, indices, ==), reqFlip);
+
+    # if there is a 1, 0 sequence it means we need to flip
+    # reqFlip([14, 18, 3, 12, 6, 20, 7, 17, 13, 9]) = [1, 0, 1, 0, 1, 0, 1, 0, 0, 0] (ints)
+
+    # Take reqFlip and \neg reqFlip
+
+    revby2 = aggregate(select(0, indices%2, ==), 1) + aggregate(select(1, indices%2, ==), -1); # 1 if indices%2==0 else -1;
+    flip = select(indices, indices+revby2, ==);
+
+
+    sort = reqFlip*aggregate(flip, tokens_float) + (1-reqFlip)*aggregate(select(indices, indices, ==), tokens_float);
+    # sort = reqFlip*aggregate(flip, tokens_float) + (1-reqFlip)*aggregate(flip, tokens_float);
+    return sort;
+}
