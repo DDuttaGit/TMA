@@ -1,0 +1,9 @@
+S = [63, 70, 77, 94, 67, 39];
+set example S
+examples off
+def Match2(p){
+    sel = select(tokens_int%p, p - (tokens_int%p), ==);
+    detect = aggregate(sel, tokens_int);
+    return (0 if detect == 0 else 1);
+}
+Match2(19)(S);
