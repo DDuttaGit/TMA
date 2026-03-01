@@ -2,7 +2,7 @@
 
 ### _Anonymous Submission_
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/17596751-a62b-4ed9-bf90-1900b9a82e25" />
+  <img src="https://github.com/user-attachments/assets/3a552212-ae10-4861-b18b-0158d3fec87d" />
 <!-- <img src="https://github.com/user-attachments/assets/1ed3d235-7528-4f08-98e2-7a248f89bf77" /> -->
 </p>
 
