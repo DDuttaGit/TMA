@@ -35,16 +35,46 @@ class AttentionTester:
         propV = get_matrix("V (value)")
         
         return propA, propX, propV
-    
+
+    def get_user_layer_input(self, layer: int) -> Tuple[List[float], List[float]]:
+        print(f"\nLayer {layer}: enter {self.total_elements} values for A and V (space-separated).")
+        print(f"X for this layer is the output Y of layer {layer - 1}.\n")
+
+        def get_matrix(name: str) -> List[float]:
+            while True:
+                try:
+                    user_input = input(f"Layer {layer} matrix {name}: ").strip()
+                    values = [float(x) for x in user_input.split()]
+                    if len(values) != self.total_elements:
+                        print(f"Error: Expected {self.total_elements} values, got {len(values)}")
+                        continue
+                    return values
+                except ValueError:
+                    print("Error: Please enter valid numbers separated by spaces")
+                except KeyboardInterrupt:
+                    print("\nInput cancelled.")
+                    sys.exit(0)
+
+        propA = get_matrix("A (attention weights)")
+        propV = get_matrix("V (value)")
+
+        return propA, propV
+
     def generate_random_input(self, seed: Optional[int] = None) -> Tuple[List[float], List[float], List[float]]:
         if seed is not None:
             np.random.seed(seed)
-        
+
         propA = np.random.uniform(0.1, 1.0, self.total_elements).tolist()
         propX = np.random.uniform(0.1, 1.0, self.total_elements).tolist()
         propV = np.random.uniform(0.1, 1.0, self.total_elements).tolist()
-        
+
         return propA, propX, propV
+
+    def generate_random_layer_input(self) -> Tuple[List[float], List[float]]:
+        propA = np.random.uniform(0.1, 1.0, self.total_elements).tolist()
+        propV = np.random.uniform(0.1, 1.0, self.total_elements).tolist()
+
+        return propA, propV
     
     def run_rasp_implementation(self, A: List[float], X: List[float], V: List[float]) -> Tuple:
         executor = REPLwithU()
@@ -171,11 +201,48 @@ class AttentionTester:
         
         if verbose:
             self.pretty_print_results(rasp_results, numpy_results)
-        
-        # Validation
+
+        self.validate(rasp_results, numpy_results)
+
+        return rasp_results, numpy_results
+
+    def run_multi_layer_comparison(self, propX: List[float],
+                                   layers: List[Tuple[List[float], List[float]]],
+                                   verbose: bool = True):
+        rasp_X = list(propX)
+        numpy_X = list(propX)
+        all_rasp_results, all_numpy_results = [], []
+
+        for i, (A, V) in enumerate(layers, start=1):
+            print("\n" + "#"*80)
+            print(f"LAYER {i} of {len(layers)}")
+            print("#"*80)
+
+            print("\n" + "="*80)
+            print("Running RASP Implementation...")
+            rasp_results = self.run_rasp_implementation(A, rasp_X, V)
+
+            print("\nRunning NumPy Implementation...")
+            numpy_results = self.run_numpy_implementation(A, numpy_X, V)
+
+            if verbose:
+                self.pretty_print_results(rasp_results, numpy_results)
+
+            self.validate(rasp_results, numpy_results)
+
+            all_rasp_results.append(rasp_results)
+            all_numpy_results.append(numpy_results)
+
+            # Output Y of this layer becomes X of the next layer
+            rasp_X = list(rasp_results[-1])
+            numpy_X = np.asarray(numpy_results[-1], dtype=float).flatten().tolist()
+
+        return all_rasp_results, all_numpy_results
+
+    def validate(self, rasp_results: Tuple, numpy_results: Tuple) -> bool:
         rasp_arrays = [np.asarray(r, dtype=float).flatten() for r in rasp_results]
-        numpy_arrays = [r.flatten() for r in numpy_results]
-        
+        numpy_arrays = [np.asarray(r, dtype=float).flatten() for r in numpy_results]
+
         print("\n" + "="*80)
         print("VALIDATION")
         print("="*80)
@@ -198,16 +265,34 @@ class AttentionTester:
         else:
             print("✗ TESTS FAILED")
         print("="*80 + "\n")
-        
-        return rasp_results, numpy_results
+
+        return all_close
+
+
+NUM_LAYERS = 2  # number of layers used in multi-layer mode
 
 
 def main():
     tester = AttentionTester(matrix_size=3)
-    
+
     print("="*80)
     print("ATTENTION MECHANISM TESTER")
     print("="*80)
+    print("\nLayer mode:")
+    print("  1. Single layer")
+    print(f"  2. Multi layer ({NUM_LAYERS} layers)")
+
+    while True:
+        try:
+            mode = input("\nSelect layer mode (1/2): ").strip()
+            if mode in ("1", "2"):
+                break
+            print("Invalid option. Please enter 1 or 2.")
+        except KeyboardInterrupt:
+            print("\n\nExiting...")
+            sys.exit(0)
+    multi_layer = mode == "2"
+
     print("\nOptions:")
     print("  1. Enter custom values")
     print("  2. Generate random values")
@@ -219,17 +304,30 @@ def main():
             
             if choice == "1":
                 propA, propX, propV = tester.get_user_input()
+                layers = [(propA, propV)]
+                if multi_layer:
+                    for layer in range(2, NUM_LAYERS + 1):
+                        layers.append(tester.get_user_layer_input(layer))
                 break
             elif choice == "2":
                 seed_input = input("Enter random seed (or press Enter for random): ").strip()
                 seed = int(seed_input) if seed_input else None
                 propA, propX, propV = tester.generate_random_input(seed)
+                layers = [(propA, propV)]
+                if multi_layer:
+                    for _ in range(2, NUM_LAYERS + 1):
+                        layers.append(tester.generate_random_layer_input())
                 print(f"\nGenerated random values (seed={seed})")
                 break
             elif choice == "3":
                 propA = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
                 propV = [0.1, 0.7, 0.4, 1.0, 0.3, 0.9, 0.5, 0.2, 0.6]
                 propX = [0.8, 0.20, 0.5, 0.1, 0.9, 0.4, 0.6, 0.3, 0.7]
+                layers = [(propA, propV)]
+                if multi_layer:
+                    propA2 = [0.9, 0.1, 0.4, 0.3, 0.7, 0.2, 0.5, 0.6, 0.8]
+                    propV2 = [0.2, 0.5, 0.9, 0.6, 0.1, 0.4, 0.8, 0.3, 0.7]
+                    layers.append((propA2, propV2))
                 print("\nUsing default test values")
                 break
             else:
@@ -240,7 +338,10 @@ def main():
         except ValueError:
             print("Invalid input. Please try again.")
     
-    rasp_results, numpy_results = tester.run_comparison(propA, propX, propV, verbose=True)
+    if multi_layer:
+        rasp_results, numpy_results = tester.run_multi_layer_comparison(propX, layers, verbose=True)
+    else:
+        rasp_results, numpy_results = tester.run_comparison(propA, propX, propV, verbose=True)
 
 
 if __name__ == "__main__":
