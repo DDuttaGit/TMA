@@ -10,7 +10,7 @@ def MaxMinSort(){
     MinSel = select(indices, indices+1, ==) and select(1, indices%2+1, ==);   # (select(indices, indices, ==) and select(1, indices%2, ==)) or (select(indices, indices+1, ==) and select(1, indices%2+1, ==));
     MaxminusMin = aggregate(MaxSel, tokens_int) - aggregate(MinSel, tokens_int);
 
-    reqFlip = 1 if MaxminusMin<0 else 0; # aggregate(select(MaxminusMin, 0, <), 1);
+    reqFlip = (1 if MaxminusMin < 0 else 0) * (1 if indices%2 == 0 else 0); # aggregate(select(MaxminusMin, 0, <), 1) and negative values in odd indices;
     reqFlip = reqFlip + aggregate(select(indices+1, indices, ==), reqFlip);
 
     # if there is a 1, 0 sequence it means we need to flip
