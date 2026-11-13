@@ -22,7 +22,7 @@ def softmax(){
 
 def softmaxrect_3dot(){
     r, c = 3, length/3;
-    exp = (2.73^tokens_float);
+    exp = (2.718^tokens_float);
     sel1, sel2, sel3 =(select(indices, c*0+c, <) and select(c*0+c, indices, >)), (select(indices, c*0+c, >=) and select(indices, c*1+c, <) and select(c*1+c, indices, >) and select(c*0+c, indices, <=)), (select(indices, c*1+c, >=) and select(indices, c*2+c, <) and select(c*2+c, indices, >) and select(c*1+c, indices, <=));
     denom1, denom2, denom3 = c*aggregate(sel1, exp), c*aggregate(sel2, exp), c*aggregate(sel3, exp);
     denom = (denom1+denom2+denom3);
